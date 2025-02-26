@@ -30,6 +30,11 @@ jobs:
       id-token: write
 
     steps:
+      - name: set time
+        run: |
+          TIME="$(TZ='Asia/Shanghai' date +'%Y%m%d%H%M%S')"
+          echo "TIME=$TIME" >> $GITHUB_ENV
+          
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -73,7 +78,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}-${{ date +%s }}
+          tags: ${{ steps.meta.outputs.tags }}-${{ env.TIME }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -87,7 +92,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         env:
           # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-          TAGS: ${{ steps.meta.outputs.tags }}-${{ date +%s }}
+          TAGS: ${{ steps.meta.outputs.tags }}-${{ env.TIME }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
