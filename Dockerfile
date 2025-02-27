@@ -1,6 +1,7 @@
 FROM alpine:3.21.3
 
-RUN apk add --no-cache tzdata gcompat libxrender
+RUN apk add --no-cache tzdata gcompat libxrender fontconfig ttf-dejavu
+RUN fc-cache -f
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo "Asia/Shanghai" > /etc/timezone
 
